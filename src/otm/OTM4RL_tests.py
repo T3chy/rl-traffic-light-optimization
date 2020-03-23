@@ -6,7 +6,7 @@ from OTM4RL import OTM4RL
 def get_config():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_folder = os.path.dirname(os.path.dirname(this_folder))
-	configfile = os.path.join(root_folder,'cfg', 'network_v6.xml')
+	configfile = os.path.join(root_folder,'cfg', 'network_simple.xml')
 	return configfile
 
 def get_otm4rl():
@@ -136,5 +136,5 @@ if __name__ == '__main__':
 	# test_get_controller_infos()
 	# test_get_queues()
 	# test_get_control()
-	test_set_queues()
-	# test_set_control()
+	# test_set_queues()
+	test_set_control()

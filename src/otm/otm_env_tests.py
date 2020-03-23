@@ -6,7 +6,7 @@ from otm_env import otmEnvDiscrete
 def get_config():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_folder = os.path.dirname(os.path.dirname(this_folder))
-	configfile = os.path.join(root_folder,'cfg', 'network_v6.xml')
+	configfile = os.path.join(root_folder,'cfg', 'network_simple.xml')
 	return configfile
 
 def get_env():
