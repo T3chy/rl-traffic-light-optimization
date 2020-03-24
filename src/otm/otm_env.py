@@ -102,7 +102,7 @@ class otmEnvDiscrete:
     
 
 
-    def plot_queues(self, queue_dynamics, signal_dynamics):
+    def plot_queues(self, queue_dynamics, signal_dynamics, link_id):
         # Ex: queue_dynamics = {1: {"waiting": [20, 30, 40, 50, 40, 30],
         #                           "transit": [100, 110, 100, 99, 90, 95]}
         #                      }
@@ -114,30 +114,30 @@ class otmEnvDiscrete:
         road_connection_info = self.otm4rl.get_road_connection_info()  
         X = self.otm4rl.get_signals()
         
-        for k in range (1,29): 
-            waiting_queue = []
-            changing_light = []
+      
+        waiting_queue = []
+        changing_light = []
         
-            for i in range(0,len(queue_dynamics[1]['waiting'])):
-                waiting_queue.append(queue_dynamics[k]['waiting'][i])
+        for i in range(0,len(queue_dynamics[1]['waiting'])):
+            waiting_queue.append(queue_dynamics[link_id]['waiting'][i])
                 
-                for j in range(1,4):     
-                    actual_stage = signal_dynamics[j][i] 
-                    if actual_stage == 0:
-                        stage = self.controllers[j]['stages'][0]
-                    else:
-                        stage = self.controllers[j]['stages'][1]
+            for j in range(1,4):     
+                actual_stage = signal_dynamics[j][i] 
+                if actual_stage == 0:
+                    stage = self.controllers[j]['stages'][0]
+                else:
+                    stage = self.controllers[j]['stages'][1]
                                      
-                    phase_ids = stage["phases"]
-                    for phase_id in phase_ids:
-                        in_link_ids = []
-                        road_connections = X[j]["phases"][phase_id]["road_conns"]
-                        for road_connection in road_connections:
-                            in_link_ids.append(road_connection_info[road_connection]["in_link"])
-                            in_link_ids = list(set(in_link_ids))
-                            if key_list[k-1] in in_link_ids:
-                                changing_light.append(i)
-                           
+                phase_ids = stage["phases"]
+                for phase_id in phase_ids:
+                    in_link_ids = []
+                    road_connections = X[j]["phases"][phase_id]["road_conns"]
+                    for road_connection in road_connections:
+                        in_link_ids.append(road_connection_info[road_connection]["in_link"])
+                        in_link_ids = list(set(in_link_ids))
+                        if key_list[link_id-1] in in_link_ids:
+                            changing_light.append(i)
+        print(changing_light)                   
         if len(changing_light)!=0:
             for a in changing_light:
                 plt.axvline(x=a*300, color = "g")

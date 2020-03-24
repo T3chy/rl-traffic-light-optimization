@@ -112,7 +112,7 @@ def test_plot_queues():
     
     signal_dynamics = {1: [0, 0, 1, 0, 1, 1], 2: [1, 0, 0, 0, 1, 1], 3: [1, 1, 1, 0, 0, 1]}
     
-    env.plot_queues(queue_dynamics,signal_dynamics)
+    env.plot_queues(queue_dynamics,signal_dynamics,2)
     
 
   
