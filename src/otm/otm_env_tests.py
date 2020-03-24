@@ -75,6 +75,13 @@ def test_step():
 	print(env.otm4rl.get_queues())
 
 	del env
+    
+# def test_plot_queues():
+    #env = get_env()
+    
+    #env.reset()
+    # to be continued...
+    
 
 def test_plot_environment():
 	env = get_env()
@@ -93,6 +100,7 @@ def test_plot_environment():
 	print(env.decode_action(action))
 	state, reward = env.step(action)
 	env.plot_environment().show()
+    
 
 if __name__ == '__main__':
 	test_encode_state()
