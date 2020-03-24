@@ -76,12 +76,46 @@ def test_step():
 
 	del env
     
-# def test_plot_queues():
-    #env = get_env()
+def test_plot_queues():
     
-    #env.reset()
-    # to be continued...
+    env = get_env()
+    env.reset()
     
+    queue_dynamics = {1: {"waiting": [20, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      2: {"waiting": [30, 50, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      3: {"waiting": [40, 60, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      4: {"waiting": [50, 70, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      5: {"waiting": [10, 50, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      6: {"waiting": [30, 70, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      7: {"waiting": [40, 80, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      8: {"waiting": [10, 40, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      9: {"waiting": [20, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      10: {"waiting": [21, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      11: {"waiting": [22, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      12: {"waiting": [23, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      13: {"waiting": [24, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      14: {"waiting": [25, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      15: {"waiting": [26, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      16: {"waiting": [27, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      17: {"waiting": [28, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      18: {"waiting": [29, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      19: {"waiting": [30, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      20: {"waiting": [34, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      21: {"waiting": [50, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      22: {"waiting": [32, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      23: {"waiting": [12, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      24: {"waiting": [19, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      25: {"waiting": [55, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      26: {"waiting": [29, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      27: {"waiting": [12, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]},
+                      28: {"waiting": [40, 30, 40, 50, 40, 30], "transit": [100, 110, 100, 99, 90, 95]}}
+    
+    signal_dynamics = {1: [0, 0, 1, 0, 1, 1], 2: [1, 0, 0, 0, 1, 1], 3: [1, 1, 1, 0, 0, 1]}
+    
+    env.plot_queues(queue_dynamics,signal_dynamics).show()
+    
+
+  
 
 def test_plot_environment():
 	env = get_env()
@@ -99,13 +133,14 @@ def test_plot_environment():
 	action = np.random.choice(env.action_space)
 	print(env.decode_action(action))
 	state, reward = env.step(action)
-	env.plot_environment().show()
+	env.plot_environment()
     
 
 if __name__ == '__main__':
-	test_encode_state()
-	test_decode_action()
-	# test_set_state()
-	# test_reset()
-	# test_step()
-	# test_plot_environment()
+	#test_encode_state()
+	#test_decode_action()
+	#test_set_state()
+	#test_reset()
+	#test_step()
+	#test_plot_environment()
+    test_plot_queues()
