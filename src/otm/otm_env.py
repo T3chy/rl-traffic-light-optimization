@@ -110,47 +110,45 @@ class otmEnvDiscrete:
         # plot a graph of number of vehicles in waiting queue over time, given a link_id
         # plot a vetical line: green if the signal turned green and red otherwise
        
-        
+        key_list = list(queue_dynamics.keys())
         road_connection_info = self.otm4rl.get_road_connection_info()  
+        X = self.otm4rl.get_signals()
         
         for k in range (1,29): 
             waiting_queue = []
             changing_light = []
-            
-            for i in range(0,len(queue_dynamics[1]['waiting'])):    
+        
+            for i in range(0,len(queue_dynamics[1]['waiting'])):
                 waiting_queue.append(queue_dynamics[k]['waiting'][i])
                 
                 for j in range(1,4):     
-                   actual_stage = signal_dynamics[j][i] 
-                   
-                   for c_id, controller in self.controllers.items():
-                       stages = controller["stages"]
-                       
-                       for stage in stages:
-                           in_link_ids = []
-                           if stage == actual_stage:
-                               phase_ids = stage["phases"]
-                               
-                               for phase_id in phase_ids:
-                                   road_connections = self.otm4rl.get_signals()[c_id]["phases"][phase_id]["road_conns"]
-                                   for road_connection in road_connections:
-                                           in_link_ids.append(road_connection_info[road_connection]["in_link"])
-                                           in_link_ids = list(set(in_link_ids))
-                             
-                                           if queue_dynamics[k] in in_link_ids:
-                                               changing_light.append(i)
-                                               
-            if len(changing_light)!=0:
-                for a in changing_light:
-                    plt.axvline(x=a*300)
+                    actual_stage = signal_dynamics[j][i] 
+                    if actual_stage == 0:
+                        stage = self.controllers[j]['stages'][0]
+                    else:
+                        stage = self.controllers[j]['stages'][1]
+                                     
+                    phase_ids = stage["phases"]
+                    for phase_id in phase_ids:
+                        in_link_ids = []
+                        road_connections = X[j]["phases"][phase_id]["road_conns"]
+                        for road_connection in road_connections:
+                            in_link_ids.append(road_connection_info[road_connection]["in_link"])
+                            in_link_ids = list(set(in_link_ids))
+                            if key_list[k-1] in in_link_ids:
+                                changing_light.append(i)
+                           
+        if len(changing_light)!=0:
+            for a in changing_light:
+                plt.axvline(x=a*300, color = "g")
                                 
                                 
-            plt.plot([i*300 for i in range(0,len(queue_dynamics[1]['waiting']))], waiting_queue)
+        plt.plot([i*300 for i in range(0,len(queue_dynamics[1]['waiting']))], waiting_queue)
             
                 
-            plt.ylabel('Waiting Queue')
-            plt.xlabel('Time Step')
-            plt.show()
+        plt.ylabel('Waiting Queue')
+        plt.xlabel('Time Step')
+        plt.show()
             
                                         
             

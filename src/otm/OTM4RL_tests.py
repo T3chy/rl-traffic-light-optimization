@@ -132,8 +132,8 @@ def test_set_control():
 if __name__ == '__main__':
 	# test_get_link_ids()
 	# test_get_max_queues()
-	# test_get_signals()
-	test_get_controller_infos()
+	test_get_signals()
+	# test_get_controller_infos()
 	# test_get_queues()
 	# test_get_control()
 	# test_set_queues()
