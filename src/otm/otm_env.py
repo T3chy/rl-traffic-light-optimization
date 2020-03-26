@@ -137,11 +137,10 @@ class otmEnvDiscrete:
                         in_link_ids = list(set(in_link_ids))
                         if key_list[link_id-1] in in_link_ids:
                             changing_light.append(i)
-        print(changing_light)                   
+                            
         if len(changing_light)!=0:
             for a in changing_light:
                 plt.axvline(x=a*300, color = "g")
-                                
                                 
         plt.plot([i*300 for i in range(0,len(queue_dynamics[1]['waiting']))], waiting_queue)
             
