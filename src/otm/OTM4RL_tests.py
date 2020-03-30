@@ -6,7 +6,7 @@ from OTM4RL import OTM4RL
 def get_config():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_folder = os.path.dirname(os.path.dirname(this_folder))
-	configfile = os.path.join(root_folder,'cfg', 'network_v6.xml')
+	configfile = os.path.join(root_folder,'cfg', 'network_1.xml')
 	return configfile
 
 def get_otm4rl():
@@ -118,7 +118,7 @@ def test_set_control():
 	print(otm4rl.get_control())
 	print(otm4rl.get_queues())
 
-	otm4rl.set_control({1:2,2:2,3:2})
+	otm4rl.set_control({1:1,2:1,3:1})
 	print(otm4rl.get_queues())
 	# this line below hangs
 	otm4rl.advance(float(100))
@@ -130,11 +130,11 @@ def test_set_control():
 
 
 if __name__ == '__main__':
-	# test_get_link_ids()
-	# test_get_max_queues()
-	# test_get_signals()
-	# test_get_controller_infos()
-	# test_get_queues()
-	# test_get_control()
+	#test_get_link_ids()
+	#test_get_max_queues()
+	#test_get_signals()
+	#test_get_controller_infos()
+	#test_get_queues()
+	#test_get_control()
 	#test_set_queues()
 	test_set_control()

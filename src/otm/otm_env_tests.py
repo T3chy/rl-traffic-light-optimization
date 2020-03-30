@@ -6,11 +6,11 @@ from otm_env import otmEnvDiscrete
 def get_config():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_folder = os.path.dirname(os.path.dirname(this_folder))
-	configfile = os.path.join(root_folder,'cfg', 'network_v6.xml')
+	configfile = os.path.join(root_folder,'cfg', 'network_1.xml')
 	return configfile
 
 def get_env():
-    return otmEnvDiscrete({"num_states": 2, "num_actions": 2, "time_step": 300, "plot_precision": 4, "buffer": True}, get_config())
+    return otmEnvDiscrete({"num_states": 2, "num_actions": 2, "time_step": 30, "plot_precision": 1, "buffer": True}, get_config())
 
 def test_decode_action():
     env = get_env()
@@ -118,7 +118,7 @@ def test_plot_queues(link_id):
 	env.add_queue_buffer()
 
 	for k in range(5):
-		for i in [0,1,2]:
+		for i in range(2):
 			env.otm4rl.set_control({1: i, 2: 0, 3: 0})
 			print(env.otm4rl.get_control())
 			env.add_signal_buffer()
@@ -128,6 +128,7 @@ def test_plot_queues(link_id):
 				print("t=" + str(t), env.otm4rl.get_queues()[link_id])
 				env.add_queue_buffer()
 
+	print(env.signal_buffer)
 	env.plot_queues(link_id, "transit")
 	env.plot_queues(link_id, "waiting")
 

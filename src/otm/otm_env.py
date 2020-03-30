@@ -163,7 +163,9 @@ class otmEnvDiscrete:
         stages = np.array(self.signal_buffer[link_controller])
         stage_times = np.array(range(len(stages)))*self.time_step
         aux = np.array([stages[i] if (i == 0 or stages[i-1] != stages[i]) else -1 for i in range(len(stages))])
-        changing_stages = np.array([aux[i] if (i == 0 or aux[i] in link_stages or (aux[i-1] in link_stages and aux[i] not in link_stages)) else -1 for i in range(len(aux))])
+        stages = np.extract(aux >= 0, stages)
+        stage_times = np.extract(aux >=0, stage_times)
+        changing_stages = np.array([stages[i] if (i == 0 or stages[i] in link_stages or (stages[i-1] in link_stages and stages[i] not in link_stages)) else -1 for i in range(len(stages))])
         stages = np.extract(changing_stages >= 0, stages)
         stage_times = np.extract(changing_stages >=0, stage_times)
         colors = ["g" if stages[i] in link_stages else "r" for i in range(len(stages))]
