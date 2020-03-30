@@ -141,5 +141,5 @@ if __name__ == '__main__':
 	# test_reset()
 	# test_step()
 	# test_get_signal_positions()
-	test_plot_queues(2)
+	test_plot_queues(12)
 	# test_plot_environment()
