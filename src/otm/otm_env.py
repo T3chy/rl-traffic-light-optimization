@@ -1,5 +1,5 @@
 import numpy as np
-from OTM4RL import OTM4RL
+from .OTM4RL import OTM4RL
 from matplotlib import pyplot as plt
 from matplotlib.collections import LineCollection
 import matplotlib.colors as pltc
@@ -7,22 +7,22 @@ from random import sample
 
 class otmEnvDiscrete:
 
-    def __init__(self, env_info, configfile):
+    def __init__(self, env_init_info, configfile):
 
-        self.time_step = env_info["time_step"]
-        self.plot_precision = env_info["plot_precision"]
+        self.time_step = env_init_info["time_step"]
+        self.plot_precision = env_init_info["plot_precision"]
 
         assert (type(self.plot_precision) == int and self.plot_precision >= 1), "plot_precision must be an integer greater than or equal to 1"
 
         self.otm4rl = OTM4RL(configfile)
-        self.num_states = env_info["num_states"]
-        self.num_actions = env_info["num_actions"]
+        self.num_states = env_init_info["num_states"]
+        self.num_actions = env_init_info["num_actions"]
         self.controllers = self.otm4rl.get_controller_infos()
         self.num_intersections = len(self.controllers)
         self.action_space = range(self.num_actions ** self.num_intersections)
         self.state_space = range(self.num_states ** (self.num_intersections * 2))
         self.max_queues = self.otm4rl.get_max_queues()
-        self.buffer = env_info["buffer"]
+        self.buffer = env_init_info["buffer"]
         self.queue_buffer = dict(list(zip(self.otm4rl.get_link_ids(), [{"waiting": [], "transit": []} for i in self.otm4rl.get_link_ids()])))
         self.signal_buffer = dict(list(zip(self.controllers.keys(), [[] for i in self.controllers.keys()])))
         # self.seed()
@@ -75,6 +75,8 @@ class otmEnvDiscrete:
         self.state = self.encode_state(state)
 
     def reset(self):
+         self.queue_buffer = dict(list(zip(self.otm4rl.get_link_ids(), [{"waiting": [], "transit": []} for i in self.otm4rl.get_link_ids()])))
+         self.signal_buffer = dict(list(zip(self.controllers.keys(), [[] for i in self.controllers.keys()])))
          state = self.max_queues.copy()
          in_links = set([rc_info["in_link"] for rc_info in self.otm4rl.get_road_connection_info().values()])
          out_links = set([rc_info["out_link"] for rc_info in self.otm4rl.get_road_connection_info().values()])
@@ -100,10 +102,11 @@ class otmEnvDiscrete:
         self.otm4rl.set_control(self.decode_action(action))
         self.add_signal_buffer()
 
-        self.otm4rl.advance(self.time_step)
+        for i in range(self.plot_precision):
+            self.otm4rl.advance(self.time_step/self.plot_precision)
+            self.add_queue_buffer()
 
         next_state = self.otm4rl.get_queues()
-        self.add_queue_buffer()
 
         self.state, state_vec = self.encode_state(next_state)
         reward = -state_vec.sum()
