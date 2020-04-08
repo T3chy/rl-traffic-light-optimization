@@ -1,5 +1,5 @@
 import numpy as np
-from .OTM4RL import OTM4RL
+from OTM4RL import OTM4RL
 from matplotlib import pyplot as plt
 from matplotlib.collections import LineCollection
 import matplotlib.colors as pltc
