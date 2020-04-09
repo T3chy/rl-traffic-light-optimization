@@ -6,7 +6,7 @@ from OTM4RL import OTM4RL
 def get_config():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_folder = os.path.dirname(os.path.dirname(this_folder))
-	configfile = os.path.join(root_folder,'cfg', 'network_1.xml')
+	configfile = os.path.join(root_folder,'cfg', '2_intersection_network.xml')
 	return configfile
 
 def get_otm4rl():
