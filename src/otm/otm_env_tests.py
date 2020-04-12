@@ -10,7 +10,7 @@ def get_config():
 	return configfile
 
 def get_env():
-    return otmEnvDiscrete({"num_states": 2, "num_actions": 2, "time_step": 120, "plot_precision": 4, "buffer": True}, get_config())
+    return otmEnvDiscrete({"num_states": 2, "num_actions": 2, "time_step": 60, "plot_precision": 4, "buffer": True}, get_config())
 
 def test_decode_action():
     env = get_env()
@@ -112,14 +112,13 @@ def test_plot_environment():
 
 def test_plot_queues(link_id):
 	env = get_env()
-	env.otm4rl.initialize()
 	t = 0
 	print("t=" + str(t), env.otm4rl.get_queues()[link_id])
 	env.add_queue_buffer()
 
 	for k in range(4):
 		for i in range(2):
-			env.otm4rl.set_control({1: i, 2: 0, 3: 0})
+			env.otm4rl.set_control({1: i, 2: 0})
 			print(env.otm4rl.get_control())
 			env.add_signal_buffer()
 			for j in range(env.plot_precision):
@@ -129,7 +128,7 @@ def test_plot_queues(link_id):
 				env.add_queue_buffer()
 
 	print(env.signal_buffer)
-	env.plot_queues(link_id, "transit")
+	# env.plot_queues(link_id, "transit")
 	env.plot_queues(link_id, "waiting")
 
 	del env
@@ -142,5 +141,5 @@ if __name__ == '__main__':
 	# test_reset()
 	# test_step()
 	# test_get_signal_positions()
-	test_plot_queues(2)
+	test_plot_queues(13)
 	# test_plot_environment()

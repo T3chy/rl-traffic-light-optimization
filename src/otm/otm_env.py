@@ -25,6 +25,7 @@ class otmEnvDiscrete:
         self.buffer = env_init_info["buffer"]
         self.queue_buffer = dict(list(zip(self.otm4rl.get_link_ids(), [{"waiting": [], "transit": []} for i in self.otm4rl.get_link_ids()])))
         self.signal_buffer = dict(list(zip(self.controllers.keys(), [[] for i in self.controllers.keys()])))
+        self.otm4rl.initialize()
         # self.seed()
 
     # def seed(self, seed=None):
@@ -70,30 +71,32 @@ class otmEnvDiscrete:
 
         return signal_command
 
-    def set_state(self, state):
+    def set_state(self, state, replace = False):
         self.otm4rl.set_queues(state)
         self.state = self.encode_state(state)
+        self.add_queue_buffer(replace)
 
-    def reset(self):
+    def reset(self, state = "random"):
          self.queue_buffer = dict(list(zip(self.otm4rl.get_link_ids(), [{"waiting": [], "transit": []} for i in self.otm4rl.get_link_ids()])))
          self.signal_buffer = dict(list(zip(self.controllers.keys(), [[] for i in self.controllers.keys()])))
-         state = self.max_queues.copy()
-         in_links = set([rc_info["in_link"] for rc_info in self.otm4rl.get_road_connection_info().values()])
-         out_links = set([rc_info["out_link"] for rc_info in self.otm4rl.get_road_connection_info().values()])
-         out_links = list(out_links - in_links)
-         for link_id in state.keys():
-            if link_id in out_links:
-                state[link_id] = {"waiting": int(0), "transit": int(0)}
-            else:
-                p = np.random.random()
-                transit_queue = p*state[link_id]
-                q = np.random.random()
-                waiting_queue = q*(state[link_id] - transit_queue)
-                state[link_id] = {"waiting": round(waiting_queue), "transit": round(transit_queue)}
-         self.otm4rl.initialize()
-         self.set_state(state)
-         self.add_queue_buffer()
+         if state == "random":
+             state = self.max_queues.copy()
+             in_links = set([rc_info["in_link"] for rc_info in self.otm4rl.get_road_connection_info().values()])
+             out_links = set([rc_info["out_link"] for rc_info in self.otm4rl.get_road_connection_info().values()])
+             out_links = list(out_links - in_links)
+             for link_id in state.keys():
+                if link_id in out_links:
+                    state[link_id] = {"waiting": int(0), "transit": int(0)}
+                else:
+                    p = np.random.random()
+                    transit_queue = p*state[link_id]
+                    q = np.random.random()
+                    waiting_queue = q*(state[link_id] - transit_queue)
+                    state[link_id] = {"waiting": round(waiting_queue), "transit": round(transit_queue)}
+         elif state == "current":
+             state = self.otm4rl.get_queues()
 
+         self.set_state(state)
          return self.state
 
     def step(self, action):
@@ -113,13 +116,17 @@ class otmEnvDiscrete:
 
         return self.state, reward
 
-    def add_queue_buffer(self):
+    def add_queue_buffer(self, replace = False):
 
         if self.buffer == True:
             queues = self.otm4rl.get_queues()
             for link_id in queues.keys():
-                self.queue_buffer[link_id]["waiting"].append(queues[link_id]["waiting"])
-                self.queue_buffer[link_id]["transit"].append(queues[link_id]["transit"])
+                if replace:
+                    self.queue_buffer[link_id]["waiting"][-1] = queues[link_id]["waiting"]
+                    self.queue_buffer[link_id]["transit"][-1] = queues[link_id]["transit"]
+                else:
+                    self.queue_buffer[link_id]["waiting"].append(queues[link_id]["waiting"])
+                    self.queue_buffer[link_id]["transit"].append(queues[link_id]["transit"])
         else:
             pass
 
@@ -162,6 +169,11 @@ class otmEnvDiscrete:
         queues = self.queue_buffer[link_id][queue_type]
         step = self.time_step/self.plot_precision
         ax.plot([i*step for i in range(len(queues))], queues)
+        max_queue = 0
+        for q in self.otm4rl.get_max_queues().values():
+            if q > max_queue:
+                max_queue = q
+        ax.set_ylim((0, max_queue))
 
         stages = np.array(self.signal_buffer[link_controller])
         stage_times = np.array(range(len(stages)))*self.time_step
