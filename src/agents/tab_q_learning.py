@@ -19,6 +19,7 @@ class QLearningAgent():
         # Store the parameters provided in agent_init_info.
         self.num_actions = agent_init_info["num_actions"]
         self.num_states = agent_init_info["num_states"]
+        self.discrete_factor = agent_init_info["discrete_factor"]
         self.epsilon = agent_init_info["epsilon"]
         self.step_size = agent_init_info["step_size"]
         self.discount = agent_init_info["discount"]
@@ -74,6 +75,16 @@ class QLearningAgent():
         self.prev_state = state
         self.prev_action = action
         return action
+
+    def encode_state(self, state):
+        encoded_state_vec = self.discrete_factor * state
+        encoded_state_vec = np.where(state != 1, encoded_state_vec.astype(int), self.discrete_factor - 1)
+        encoded_state_vec.reverse()
+        i = 0
+        for stage_state in encoded_state_vec:
+            encoded_state += stage_state * (self.discrete_factor ** i)
+        i += 1
+        return encoded_state
 
     def argmax(self, q_values):
         """argmax with random tie-breaking
