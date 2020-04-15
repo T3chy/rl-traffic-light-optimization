@@ -6,7 +6,7 @@ from otm_env import otmEnvDiscrete
 def get_config():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_folder = os.path.dirname(os.path.dirname(this_folder))
-	configfile = os.path.join(root_folder,'cfg', 'network_1.xml')
+	configfile = os.path.join(root_folder,'cfg', '2_intersection_network.xml')
 	return configfile
 
 def get_env():
@@ -119,7 +119,7 @@ def test_plot_queues(link_id):
 
 	for k in range(5):
 		for i in range(2):
-			env.otm4rl.set_control({1: i, 2: 0, 3: 0})
+			env.otm4rl.set_control({1: i, 2: 0})
 			print(env.otm4rl.get_control())
 			env.add_signal_buffer()
 			for j in range(env.plot_precision):
@@ -135,12 +135,12 @@ def test_plot_queues(link_id):
 	del env
 
 if __name__ == '__main__':
-	# get_env()
+	get_env()
 	# test_encode_state()
 	# test_decode_action()
 	# test_set_state()
 	# test_reset()
 	# test_step()
 	# test_get_signal_positions()
-	test_plot_queues(2)
+	#test_plot_queues(2)
 	# test_plot_environment()
