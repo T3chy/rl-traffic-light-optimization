@@ -1,9 +1,6 @@
 import numpy as np
 from OTM4RL import OTM4RL
-# from env_plot import plotEnv
-from matplotlib import pyplot as plt
-from matplotlib.collections import LineCollection
-import matplotlib.colors as pltc
+from env_plot import plotEnv
 from random import sample
 
 class otmEnv:
@@ -20,7 +17,7 @@ class otmEnv:
         self.action_space = range(self.otm4rl.num_stages ** self.otm4rl.num_intersections)
         if self.buffer:
             self.network_lines = self.otm4rl.get_network_lines()
-        # self.plot = plotEnv()
+        self.plot = plotEnv()
         # self.seed()
 
     # def seed(self, seed=None):
@@ -41,13 +38,13 @@ class otmEnv:
              self.queue_buffer = dict(list(zip(self.otm4rl.link_ids, [{"waiting": [], "transit": []} for i in self.otm4rl.link_ids])))
              self.signal_buffer = dict(list(zip(self.otm4rl.controllers.keys(), [[] for i in self.otm4rl.controllers.keys()])))
          if set_queues == "random":
-             queues = self.random_queues()
+             self.set_state(self.random_queues())
          elif set_queues == "current":
-             queues = self.otm4rl.get_queues()
+             self.state = self.q2state(self.otm4rl.get_queues())
+             self.add_queue_buffer()
          else:
-             queues = set_queues
+             self.set_state(set_queues)
 
-         self.set_state(queues)
          return self.state
 
     def step(self, action):
@@ -116,7 +113,7 @@ class otmEnv:
                rand_q[link_id] = {"waiting": round(waiting_queue), "transit": round(transit_queue)}
         return rand_q
 
-    def add_queue_buffer(self, replace = False):
+    def add_queue_buffer(self):
 
         if self.buffer == True:
             queues = self.otm4rl.get_queues()
@@ -135,9 +132,52 @@ class otmEnv:
         else:
             pass
 
-    # def plot_queues(self, link_id, queue_type):
-    #     self.plot.queue_progression(self.queue_buffer, self.signal_buffer, self.time_step, self.plot_precision)
-    #
+    def plot_agg_queue(self, c_id, stage_id, queue_type, plot_hlines = True, plot_signals = True, start = 0, end = None):
+
+        link_ids = self.otm4rl.in_link_ids[c_id][stage_id]
+        ymax = np.sum([self.otm4rl.max_queues[link_id] for link_id in link_ids])
+        ylim = (0, ymax*1.05)
+        if plot_hlines:
+            if queue_type == "waiting":
+                ybars = [ymax*i/self.state_division for i in range(1, self.state_division + 1)]
+            else:
+                ybars = [ymax]
+        else:
+            ybars = None
+        title = "Agg. Queue Dynamics: Controller " + str(c_id) + ", Stage " + str(stage_id) + " - " + queue_type + " queue"
+        green_stages = [stage_id]
+        queue_vec = np.array([self.queue_buffer[link_id][queue_type][start:end] for link_id in link_ids]).sum(axis=0)
+        if plot_signals:
+            signal_vec = self.signal_buffer[c_id]
+        else:
+            signal_vec = None
+
+        self.plot.plot_queue(self.time_step, self.plot_precision, ylim, title, green_stages, queue_vec, signal_vec, ybars)
+
+    def plot_link_queue(self, link_id, queue_type, plot_hlines = True, plot_signals = True, start = 0, end = None):
+
+        try:
+            link_controller = self.otm4rl.in_link_info[link_id]["controller"]
+            green_stages = self.otm4rl.in_link_info[link_id]["stages"]
+        except:
+            print("This link is leaving the network or it is a demand link, so it is not impacted by traffic lights")
+            return
+
+        ymax = self.otm4rl.max_queues[link_id]
+        ylim = (0, ymax*1.05)
+        if plot_hlines:
+            ybars = [ymax]
+        else:
+            ybars = None
+        title = "Queue Dynamics: Link " + str(link_id) + " - " + queue_type + " queue"
+        queue_vec = self.queue_buffer[link_id][queue_type][start:end]
+        if plot_signals:
+            signal_vec = self.signal_buffer[link_controller]
+        else:
+            signal_vec = None
+
+        self.plot.plot_queue(self.time_step, self.plot_precision, ylim, title, green_stages, queue_vec, signal_vec, ybars)
+
     # def plot_network_gradient(self):
     #     self.plot.network_gradient(self.otm4rl.get_queues(), self.otm4rl.get_control())
 

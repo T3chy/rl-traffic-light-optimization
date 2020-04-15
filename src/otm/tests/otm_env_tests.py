@@ -1,11 +1,16 @@
+import numpy as np
 import os
 import inspect
-import numpy as np
+import sys
+
+otm_folder = os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))))
+sys.path.append(otm_folder)
+
 from otm_env import otmEnv
 
 def get_env():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-	root_folder = os.path.dirname(os.path.dirname(this_folder))
+	root_folder = os.path.dirname(os.path.dirname(os.path.dirname(this_folder)))
 	configfile = os.path.join(root_folder,'cfg', 'network_1.xml')
 	return otmEnv({"state_division": 2, "time_step": 60, "plot_precision": 4, "buffer": True}, configfile)
 
@@ -108,6 +113,38 @@ def test_close():
 	env.start()
 	print(env.otm4rl.get_queues())
 	del env
+
+def test_plot_agg_queue():
+	env = get_env()
+	env.reset("current")
+
+	for j in range(3):
+		for i in range(2):
+			env.otm4rl.set_control({1: i, 2: 0})
+			env.add_signal_buffer()
+			for j in range(env.plot_precision):
+				env.otm4rl.otm.advance(float(env.time_step/env.plot_precision))
+				env.add_queue_buffer()
+
+	env.plot_agg_queue(1, 0, "waiting")
+	env.plot_agg_queue(1, 0, "transit")
+
+	del env
+
+def test_plot_link_queue(link_id):
+	env = get_env()
+	env.reset("current")
+
+	for j in range(3):
+		for i in range(2):
+			env.otm4rl.set_control({1: i, 2: 0})
+			env.add_signal_buffer()
+			for j in range(env.plot_precision):
+				env.otm4rl.otm.advance(float(env.time_step/env.plot_precision))
+				env.add_queue_buffer()
+
+	env.plot_link_queue(link_id, queue_type="waiting", hlines = True)
+	env.plot_link_queue(link_id, queue_type="transit", hlines = True)
 # def test_get_signal_positions():
 # 	env = get_env()
 # 	env.reset()
@@ -141,29 +178,6 @@ def test_close():
 # 	env.plot_environment(state, env.decode_action(action))
 #
 # 	del env
-#
-# def test_plot_queues(link_id):
-# 	env = get_env()
-# 	env.reset(set_state = "current")
-# 	t = 0
-# 	print("t=" + str(t), env.otm4rl.get_queues()[link_id])
-#
-# 	for k in range(4):
-# 		for i in range(2):
-# 			env.otm4rl.set_control({1: i, 2: 0})
-# 			print(env.otm4rl.get_control())
-# 			env.add_signal_buffer()
-# 			for j in range(env.plot_precision):
-# 				env.otm4rl.advance(env.time_step/env.plot_precision)
-# 				t += env.time_step/env.plot_precision
-# 				print("t=" + str(t), env.otm4rl.get_queues()[link_id])
-# 				env.add_queue_buffer()
-#
-# 	print(env.signal_buffer)
-# 	# env.plot_queues(link_id, "transit")
-# 	env.plot_queues(link_id, "waiting")
-#
-# 	del env
 
 if __name__ == '__main__':
 	# test_random_queues()
@@ -174,4 +188,6 @@ if __name__ == '__main__':
 	# test_add_signal_buffer()
 	# test_decode_action()
 	# test_step()
-	test_close()
+	# test_close()
+	# test_plot_agg_queue()
+	test_plot_link_queue(2)

@@ -1,6 +1,11 @@
+import numpy as np
 import os
 import inspect
-import numpy as np
+import sys
+
+otm_folder = os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))))
+sys.path.append(otm_folder)
+
 from OTM4RL import OTM4RL
 
 # GET STATIC -----------------------------------------
@@ -162,7 +167,7 @@ def test_set_control(configfile):
 
 if __name__ == '__main__':
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-	root_folder = os.path.dirname(os.path.dirname(this_folder))
+	root_folder = os.path.dirname(os.path.dirname(os.path.dirname(this_folder)))
 	configfile = os.path.join(root_folder,'cfg', 'network_tests.xml')
 
 	# test_get_link_ids(configfile)
