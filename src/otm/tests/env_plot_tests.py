@@ -12,7 +12,7 @@ from env_plot import plotEnv
 def get_env():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_folder = os.path.dirname(os.path.dirname(os.path.dirname(this_folder)))
-	configfile = os.path.join(root_folder,'cfg', 'network_1.xml')
+	configfile = os.path.join(root_folder,'cfg', 'network_tests.xml')
 	return otmEnv({"state_division": 2, "time_step": 60, "plot_precision": 4, "buffer": True}, configfile)
 
 def test_plot_queue():

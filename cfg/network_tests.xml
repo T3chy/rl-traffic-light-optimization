@@ -131,8 +131,8 @@
         <parameter name="offset" value="0"/>
       </parameters>
       <stages>
-        <stage phases="1,2" duration="120"/>
-        <stage phases="7,8" duration="120"/>
+        <stage phases="1,2" duration="161"/>
+        <stage phases="7,8" duration="79"/>
       </stages>
     </controller>
 
@@ -141,11 +141,11 @@
       <parameters>
         <parameter name="start_time" value="0"/>
         <parameter name="cycle" value="240"/>
-        <parameter name="offset" value="0"/>
+        <parameter name="offset" value="59"/>
       </parameters>
       <stages>
-        <stage phases="3,4" duration="120"/>
-        <stage phases="5,6" duration="120"/>
+        <stage phases="3,4" duration="161"/>
+        <stage phases="5,6" duration="79"/>
       </stages>
     </controller>
 
