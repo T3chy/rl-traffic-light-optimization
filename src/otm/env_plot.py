@@ -8,26 +8,25 @@ class plotEnv:
     def __init__(self):
         pass
 
-    def plot_queue(self, time_step, plot_precision, ylim, title, green_stages, queue_vec, signal_vec = None, ybars = None):
+    def plot_queue(self, ylim, title, green_stages, queue_vec, queue_times, signal_vec = None, signal_times = None, ybars = None):
         fig, ax = plt.subplots()
-        step = time_step/plot_precision
-        ax.plot([i*step for i in range(len(queue_vec))], queue_vec)
+        ax.plot(queue_times, queue_vec)
         ax.set_ylim(ylim)
 
         if signal_vec != None:
             stages = np.array(signal_vec)
-            stage_times = np.array(range(len(stages)))*time_step
             aux = np.array([stages[i] if (i == 0 or stages[i-1] != stages[i]) else -1 for i in range(len(stages))])
             stages = np.extract(aux >= 0, stages)
-            stage_times = np.extract(aux >=0, stage_times)
+            stage_times = np.extract(aux >=0, signal_times)
             changing_stages = np.array([stages[i] if (i == 0 or stages[i] in green_stages or (stages[i-1] in green_stages and stages[i] not in green_stages)) else -1 for i in range(len(stages))])
             stages = np.extract(changing_stages >= 0, stages)
             stage_times = np.extract(changing_stages >=0, stage_times)
             colors = ["g" if stages[i] in green_stages else "r" for i in range(len(stages))]
             for i in range(len(colors)):
+                x_text_space = (stage_times[-1] - stage_times[0])*0.005
                 ax.axvline(x=stage_times[i], color = colors[i])
                 y = (ax.get_ylim()[1] - ax.get_ylim()[0])*0.96 + ax.get_ylim()[0]
-                ax.text(stage_times[i] + 0.05*time_step, y, stages[i] if stages[i] in green_stages else "")
+                ax.text(stage_times[i] + x_text_space, y, stages[i] if stages[i] in green_stages else "")
 
         if ybars != None:
             for ybar in ybars:

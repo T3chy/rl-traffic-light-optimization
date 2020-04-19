@@ -12,7 +12,7 @@ def get_env():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_folder = os.path.dirname(os.path.dirname(os.path.dirname(this_folder)))
 	configfile = os.path.join(root_folder,'cfg', 'network_1.xml')
-	return otmEnv({"state_division": 2, "time_step": 60, "plot_precision": 4, "buffer": True}, configfile)
+	return otmEnv({"state_division": 2, "time_step": 60, "plot_precision": 1, "buffer": True}, configfile)
 
 def test_random_queues():
 	env = get_env()
@@ -131,20 +131,33 @@ def test_plot_agg_queue():
 
 	del env
 
-def test_plot_link_queue(link_id):
+def test_plot_link_queue():
 	env = get_env()
-	env.reset("current")
+	env.reset("random")
+	num_cycles = 5
+	for i in range(num_cycles):
+		env.otm4rl.set_control({1: 0, 2: 0})
+		env.add_signal_buffer()
+		env.otm4rl.otm.advance(float(30))
+		env.add_queue_buffer()
+		env.otm4rl.set_control({1: 1, 2: 0})
+		env.add_signal_buffer()
+		env.otm4rl.otm.advance(float(30))
+		env.add_queue_buffer()
+	env.plot_link_queue(2, queue_type="waiting", plot_hlines = True)
+	env.plot_link_queue(13, queue_type="waiting", plot_hlines = True)
+	env.close()
+	# for j in range(3):
+	# 	for i in range(2):
+	# 		env.otm4rl.set_control({1: i, 2: 0})
+	# 		env.add_signal_buffer()
+	# 		for j in range(env.plot_precision):
+	# 			env.otm4rl.otm.advance(float(env.time_step/env.plot_precision))
+	# 			env.add_queue_buffer()
+	#
+	# env.plot_link_queue(link_id, queue_type="waiting", hlines = True)
+	# env.plot_link_queue(link_id, queue_type="transit", hlines = True)
 
-	for j in range(3):
-		for i in range(2):
-			env.otm4rl.set_control({1: i, 2: 0})
-			env.add_signal_buffer()
-			for j in range(env.plot_precision):
-				env.otm4rl.otm.advance(float(env.time_step/env.plot_precision))
-				env.add_queue_buffer()
-
-	env.plot_link_queue(link_id, queue_type="waiting", hlines = True)
-	env.plot_link_queue(link_id, queue_type="transit", hlines = True)
 # def test_get_signal_positions():
 # 	env = get_env()
 # 	env.reset()
@@ -190,4 +203,4 @@ if __name__ == '__main__':
 	# test_step()
 	# test_close()
 	# test_plot_agg_queue()
-	test_plot_link_queue(2)
+	test_plot_link_queue()

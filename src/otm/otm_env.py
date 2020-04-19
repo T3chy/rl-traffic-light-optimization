@@ -5,14 +5,14 @@ from random import sample
 
 class otmEnv:
 
-    def __init__(self, env_init_info, configfile):
+    def __init__(self, env_init_info):
 
-        self.configfile = configfile
+        self.configfile = env_init_info["configfile"]
         self.state_division = env_init_info.get("state_division", None)
         self.time_step = env_init_info["time_step"]
         self.plot_precision = env_init_info["plot_precision"]
         assert (type(self.plot_precision) == int and self.plot_precision >= 1), "plot_precision must be an integer greater than or equal to 1"
-        self.buffer = env_init_info["buffer"]
+        self.buffer = env_init_info.get("buffer", False)
         self.start()
         self.action_space = range(self.otm4rl.num_stages ** self.otm4rl.num_intersections)
         if self.buffer:
@@ -40,6 +40,10 @@ class otmEnv:
          if set_queues == "random":
              self.set_state(self.random_queues())
          elif set_queues == "current":
+             self.state = self.q2state(self.otm4rl.get_queues())
+             self.add_queue_buffer()
+         elif set_queues == "initial":
+             self.start()
              self.state = self.q2state(self.otm4rl.get_queues())
              self.add_queue_buffer()
          else:
@@ -107,9 +111,9 @@ class otmEnv:
                rand_q[link_id] = {"waiting": int(0), "transit": int(0)}
            else:
                p = np.random.random()
-               transit_queue = p*self.otm4rl.max_queues[link_id]
+               waiting_queue = p*self.otm4rl.max_queues[link_id]
                q = np.random.random()
-               waiting_queue = q*(self.otm4rl.max_queues[link_id] - transit_queue)
+               transit_queue = q*(self.otm4rl.max_queues[link_id] - waiting_queue)
                rand_q[link_id] = {"waiting": round(waiting_queue), "transit": round(transit_queue)}
         return rand_q
 
@@ -137,7 +141,7 @@ class otmEnv:
         link_ids = self.otm4rl.in_link_ids[c_id][stage_id]
         ymax = np.sum([self.otm4rl.max_queues[link_id] for link_id in link_ids])
         ylim = (0, ymax*1.05)
-        if plot_hlines:
+        if plot_hlines and self.state_division != None:
             if queue_type == "waiting":
                 ybars = [ymax*i/self.state_division for i in range(1, self.state_division + 1)]
             else:
@@ -146,13 +150,23 @@ class otmEnv:
             ybars = None
         title = "Agg. Queue Dynamics: Controller " + str(c_id) + ", Stage " + str(stage_id) + " - " + queue_type + " queue"
         green_stages = [stage_id]
-        queue_vec = np.array([self.queue_buffer[link_id][queue_type][start:end] for link_id in link_ids]).sum(axis=0)
+        start_signal = int(start/self.time_step)
+        start_queue = start_signal * self.plot_precision
+        end_signal = end
+        end_queue = end
+        if end != None:
+            end_signal = int(end/self.time_step)
+            end_queue = end_signal * self.plot_precision
+        queue_vec = np.array([self.queue_buffer[link_id][queue_type][start_queue:end_queue] for link_id in link_ids]).sum(axis=0)
+        queue_times = [i*self.time_step/self.plot_precision for i in range(len(queue_vec))]
         if plot_signals:
-            signal_vec = self.signal_buffer[c_id]
+            signal_vec = self.signal_buffer[c_id][start_signal:end_signal]
+            signal_times = np.array(range(len(signal_vec)))*self.time_step
         else:
             signal_vec = None
+            signal_times = None
 
-        self.plot.plot_queue(self.time_step, self.plot_precision, ylim, title, green_stages, queue_vec, signal_vec, ybars)
+        self.plot.plot_queue(ylim, title, green_stages, queue_vec, queue_times, signal_vec, signal_times, ybars)
 
     def plot_link_queue(self, link_id, queue_type, plot_hlines = True, plot_signals = True, start = 0, end = None):
 
@@ -170,13 +184,23 @@ class otmEnv:
         else:
             ybars = None
         title = "Queue Dynamics: Link " + str(link_id) + " - " + queue_type + " queue"
-        queue_vec = self.queue_buffer[link_id][queue_type][start:end]
+        start_signal = int(start/self.time_step)
+        start_queue = start_signal * self.plot_precision
+        end_signal = end
+        end_queue = end
+        if end != None:
+            end_signal = int(end/self.time_step)
+            end_queue = end_signal * self.plot_precision
+        queue_vec = self.queue_buffer[link_id][queue_type][start_queue:end_queue]
+        queue_times = [i*self.time_step/self.plot_precision for i in range(len(queue_vec))]
         if plot_signals:
-            signal_vec = self.signal_buffer[link_controller]
+            signal_vec = self.signal_buffer[link_controller][start_signal:end_signal]
+            signal_times = np.array(range(len(signal_vec)))*self.time_step
         else:
             signal_vec = None
+            signal_times = None
 
-        self.plot.plot_queue(self.time_step, self.plot_precision, ylim, title, green_stages, queue_vec, signal_vec, ybars)
+        self.plot.plot_queue(ylim, title, green_stages, queue_vec, queue_times, signal_vec, signal_times, ybars)
 
     # def plot_network_gradient(self):
     #     self.plot.network_gradient(self.otm4rl.get_queues(), self.otm4rl.get_control())

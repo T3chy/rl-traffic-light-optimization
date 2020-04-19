@@ -1,8 +1,8 @@
 import numpy as np
 
 # Q-Learning agent
-class QLearningAgent():
-    def agent_init(self, agent_init_info):
+class TabQLearningAgent:
+    def __init__(self, agent_init_info):
         """Setup for the agent called when the experiment first starts.
 
         Args:
@@ -27,7 +27,6 @@ class QLearningAgent():
 
         # Create an array for action-value estimates and initialize it to zero.
         self.q = np.zeros((self.num_states, self.num_actions)) # The array of action-value estimates.
-
 
     def agent_start(self, state):
         """The first method called when the episode starts, called after
@@ -79,7 +78,7 @@ class QLearningAgent():
 
     def encode_state(self, state):
         encoded_state_vec = self.state_division * state
-        encoded_state_vec = np.flip(np.where(state != 1, encoded_state_vec.astype(int), self.state_division - 1))
+        encoded_state_vec = np.flip(np.where(state < 1, encoded_state_vec.astype(int), self.state_division - 1))
         encoded_state = np.sum(encoded_state_vec * (self.state_division ** np.array(range(len(encoded_state_vec)))))
         return encoded_state
 

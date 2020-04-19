@@ -9,10 +9,10 @@
 	<demands>
 		<demand link_id="1" commodity_id="1">1500</demand>
     <demand link_id="5" commodity_id="1">1500</demand>
-    <demand link_id="9" commodity_id="1">750</demand>
-    <demand link_id="12" commodity_id="1">750</demand>
-    <demand link_id="15" commodity_id="1">750</demand>
-    <demand link_id="18" commodity_id="1">750</demand>
+    <demand link_id="9" commodity_id="1">600</demand>
+    <demand link_id="12" commodity_id="1">600</demand>
+    <demand link_id="15" commodity_id="1">600</demand>
+    <demand link_id="18" commodity_id="1">600</demand>
 	</demands>
 
 	<models>
@@ -131,8 +131,8 @@
         <parameter name="offset" value="0"/>
       </parameters>
       <stages>
-        <stage phases="1,2" duration="120"/>
-        <stage phases="7,8" duration="120"/>
+        <stage phases="1,2" duration="55"/>
+        <stage phases="7,8" duration="185"/>
       </stages>
     </controller>
 
