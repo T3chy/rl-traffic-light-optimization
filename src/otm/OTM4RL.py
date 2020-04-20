@@ -9,7 +9,6 @@ class OTM4RL(OTMWrapper):
         root_folder = os.path.dirname(os.path.dirname(this_folder))
         cfg = os.path.join(root_folder,'cfg', configfile)
         OTMWrapper.__init__(self, cfg)
-
         self.link_ids = self.otm.scenario().get_link_ids()
         self.node_ids = self.otm.scenario().get_node_ids()
         self.controllers = self.get_controller_infos()

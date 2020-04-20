@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<scenario xmlns="opentrafficmodels">
+
+	<commodities>
+		<commodity id="1" name="c1" pathfull="false"/>
+	</commodities>
+
+	<demands>
+		<demand link_id="1" commodity_id="1">1500</demand>
+    <demand link_id="5" commodity_id="1">1500</demand>
+    <demand link_id="9" commodity_id="1">750</demand>
+    <demand link_id="12" commodity_id="1">750</demand>
+    <demand link_id="15" commodity_id="1">750</demand>
+    <demand link_id="18" commodity_id="1">750</demand>
+	</demands>
+
+	<models>
+<!-- 		<model type="ctm" name="myctm" is_default="true">
+			<model_params sim_dt="2" max_cell_length="100"/>
+		</model> -->
+    <model type="spaceq" process="deterministic" name="sq" is_default="true"/>
+	</models>
+
+	<network>
+
+		<nodes>
+			<node id="1" x="-100" y="0"/>
+			<node id="10" x="0" y="0"/>
+      <node id="11" x="0" y="0"/>
+			<node id="2" x="1000" y="0"/>
+			<node id="3" x="2000" y="0"/>
+      <node id="4" x="3100" y="0"/>
+      <node id="40" x="3000" y="0"/>
+			<node id="41" x="3000" y="0"/>
+			<node id="5" x="1000" y="1100"/>
+      <node id="50" x="1000" y="1000"/>
+			<node id="51" x="1000" y="1000"/>
+      <node id="6" x="1000" y="-1100"/>
+      <node id="60" x="1000" y="-1000"/>
+      <node id="61" x="1000" y="-1000"/>
+      <node id="7" x="2000" y="1100"/>
+			<node id="70" x="2000" y="1000"/>
+      <node id="71" x="2000" y="1000"/>
+      <node id="8" x="2000" y="-1100"/>
+      <node id="80" x="2000" y="-1000"/>
+      <node id="81" x="2000" y="-1000"/>
+		</nodes>
+
+		<links>
+			<link id="1" length="1000" start_node_id="1" end_node_id="10" roadparam="1" full_lanes="3"/>
+			<link id="2" length="1000" start_node_id="10" end_node_id="2" roadparam="1" full_lanes="3"/>
+			<link id="3" length="1000" start_node_id="2" end_node_id="3" roadparam="1" full_lanes="3"/>
+      <link id="4" length="1000" start_node_id="3" end_node_id="40" roadparam="1" full_lanes="3"/>
+			<link id="5" length="1000" start_node_id="4" end_node_id="41" roadparam="1" full_lanes="3"/>
+			<link id="6" length="1000" start_node_id="41" end_node_id="3" roadparam="1" full_lanes="3"/>
+      <link id="7" length="1000" start_node_id="3" end_node_id="2" roadparam="1" full_lanes="3"/>
+			<link id="8" length="1000" start_node_id="2" end_node_id="11" roadparam="1" full_lanes="3"/>
+			<link id="9" length="1000" start_node_id="5" end_node_id="50" roadparam="2" full_lanes="1"/>
+      <link id="10" length="1000" start_node_id="50" end_node_id="2" roadparam="2" full_lanes="1"/>
+			<link id="11" length="1000" start_node_id="2" end_node_id="60" roadparam="2" full_lanes="1"/>
+			<link id="12" length="1000" start_node_id="6" end_node_id="61" roadparam="2" full_lanes="1"/>
+      <link id="13" length="1000" start_node_id="61" end_node_id="2" roadparam="2" full_lanes="1"/>
+			<link id="14" length="1000" start_node_id="2" end_node_id="51" roadparam="2" full_lanes="1"/>
+			<link id="15" length="1000" start_node_id="7" end_node_id="70" roadparam="2" full_lanes="1"/>
+      <link id="16" length="1000" start_node_id="70" end_node_id="3" roadparam="2" full_lanes="1"/>
+			<link id="17" length="1000" start_node_id="3" end_node_id="80" roadparam="2" full_lanes="1"/>
+			<link id="18" length="1000" start_node_id="8" end_node_id="81" roadparam="2" full_lanes="1"/>
+      <link id="19" length="1000" start_node_id="81" end_node_id="3" roadparam="2" full_lanes="1"/>
+			<link id="20" length="1000" start_node_id="3" end_node_id="71" roadparam="2" full_lanes="1"/>
+		</links>
+
+		<roadparams>
+			<roadparam id="1" capacity="2000" speed="100" jam_density="100"/>
+			<roadparam id="2" capacity="1000" speed="50" jam_density="50"/>
+		</roadparams>
+    <roadconnections>
+
+      <roadconnection id="1" in_link="1" out_link="2" />
+      <roadconnection id="2" in_link="2" out_link="3" />
+      <roadconnection id="3" in_link="3"  out_link="4" />
+      <roadconnection id="4" in_link="5"  out_link="6" />
+      <roadconnection id="5" in_link="6" out_link="7" />
+      <roadconnection id="6" in_link="7"  out_link="8" />
+      <roadconnection id="7" in_link="9"  out_link="10" />
+      <roadconnection id="8" in_link="10" out_link="11" />
+      <roadconnection id="9" in_link="12"  out_link="13" />
+      <roadconnection id="10" in_link="13"  out_link="14" />
+      <roadconnection id="11" in_link="15"  out_link="16" />
+      <roadconnection id="12" in_link="16" out_link="17" />
+      <roadconnection id="13" in_link="18"  out_link="19" />
+      <roadconnection id="14" in_link="19"  out_link="20" />
+
+
+    </roadconnections>
+
+	</network>
+
+
+  <actuators>
+
+    <actuator id="1" type="signal">
+      <actuator_target type="node" id="2"/>
+      <signal>
+        <phase id="1" roadconnection_ids="2"    yellow_time="3" red_clear_time="2" min_green_time="5"/>
+        <phase id="2" roadconnection_ids="6" yellow_time="3" red_clear_time="2" min_green_time="5"/>
+        <phase id="7" roadconnection_ids="8"   yellow_time="3" red_clear_time="2" min_green_time="5"/>
+        <phase id="8" roadconnection_ids="10"   yellow_time="3" red_clear_time="2" min_green_time="5"/>
+      </signal>
+    </actuator>
+
+    <actuator id="2" type="signal">
+      <actuator_target type="node" id="3"/>
+      <signal>
+        <phase id="3" roadconnection_ids="3"   yellow_time="3" red_clear_time="2" min_green_time="5"/>
+        <phase id="4" roadconnection_ids="5"     yellow_time="3" red_clear_time="2" min_green_time="5"/>
+        <phase id="5" roadconnection_ids="12"   yellow_time="3" red_clear_time="2" min_green_time="5"/>
+        <phase id="6" roadconnection_ids="14"   yellow_time="3" red_clear_time="2" min_green_time="5"/>
+      </signal>
+    </actuator>
+
+  </actuators>
+
+  <controllers>
+
+    <controller id="1" type="sig_pretimed">
+      <target_actuators ids="1"/>
+      <parameters>
+        <parameter name="start_time" value="0"/>
+        <parameter name="cycle" value="240"/>
+        <parameter name="offset" value="84"/>
+      </parameters>
+      <stages>
+        <stage phases="1,2" duration="120"/>
+        <stage phases="7,8" duration="120"/>
+      </stages>
+    </controller>
+
+    <controller id="2" type="sig_pretimed">
+      <target_actuators ids="2"/>
+      <parameters>
+        <parameter name="start_time" value="0"/>
+        <parameter name="cycle" value="240"/>
+        <parameter name="offset" value="0"/>
+      </parameters>
+      <stages>
+        <stage phases="3,4" duration="120"/>
+        <stage phases="5,6" duration="120"/>
+      </stages>
+    </controller>
+
+  </controllers>
+
+</scenario>

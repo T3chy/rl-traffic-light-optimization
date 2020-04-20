@@ -164,12 +164,12 @@ class Artery:
         gstar = max(gstaro, gstari)
 
         if fLstar >= gstar:
-            print('double band')
+            band = 'double band'
             omegaN = np.array(omegaL)
             bstar = sol.x[n-1]
             bbarstar = sol.x[n]
         else:
-            print('single band')
+            band = 'single band'
             if gstaro >= gstari:   # outbound is dominant
                 omegaN = np.zeros(n)
                 bstar = gstar
@@ -185,7 +185,7 @@ class Artery:
         # set offsets on intersections ............
         self.set_outbound_relative_offsets(omegaN)
 
-        return (bstar,bbarstar)
+        return (bstar,bbarstar,band)
 
     def set_outbound_relative_offsets(self,omegaO):
 

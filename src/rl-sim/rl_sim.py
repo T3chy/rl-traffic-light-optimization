@@ -35,16 +35,12 @@ class rlGlue:
             raise("Algorithm " + str(algo) + " not found!")
 
     def start(self, initial_state):
-        try:
-            self.env.otm4rl
-        except:
-            self.env.start()
-
+        self.env.start()
         state = self.env.reset(initial_state)
         return self.agent.agent_start(state)
 
     def step(self, action):
-        state, reward = self.env.step(action)
+        state, reward, _ = self.env.step(action)
         self.add_reward_buffer(reward)
         return self.agent.agent_step(reward, state)
 
@@ -64,21 +60,19 @@ class rlGlue:
     def train_agent(self, initial_state, num_steps):
         initial_action = self.start(initial_state)
         self.run_steps(initial_action, num_steps)
+        self.end()
 
-    def test_policy(self, initial_state, num_steps, policy = None, buffer = True):
+    def test_rl_policy(self, initial_state, num_steps, buffer = True):
         performance = 0
         old_buffer = self.env.buffer
         self.env.buffer = buffer
+        self.env.start()
         state = self.env.reset(initial_state)
-        if policy == None:
-            for i in range(num_steps):
-                state, reward = self.env.step(self.agent.greedy_policy(state))
-                performance += reward
-        else:
-            for i in range(num_steps):
-                state, reward = self.env.step(policy[i])
-                performance += reward
+        for i in tqdm(range(num_steps)):
+            state, reward, avg_reward = self.env.step(self.agent.greedy_policy(state), compute_reward = True)
+            performance += avg_reward
         self.env.buffer = old_buffer
+        self.end()
         return performance/num_steps
 
     def end(self):
@@ -92,3 +86,49 @@ class rlGlue:
             plt.show()
         else:
             print("Rewards were not saved during this experiment. Set num_rewards to a value greater than 0.")
+
+class benchmarkTest:
+
+    def __init__(self, env_init_info):
+        self.env = otmEnv(env_init_info)
+        self.env.close()
+
+    def test_benchmark(self, initial_state, num_steps, buffer = True):
+        performance = 0
+        self.env.start()
+        self.env.buffer = buffer
+        state = self.env.reset(initial_state)
+
+        for i in tqdm(range(num_steps*self.env.time_step)):
+            self.env.add_signal_buffer()
+            performance += self.env.advance(1, compute_reward = True)
+            self.env.add_queue_buffer()
+
+        self.env.close()
+
+        return performance/(num_steps*self.env.time_step)
+
+    def plot_agg_queue(self, c_id, stage_id, queue_type, plot_hlines = True, plot_signals = True, start = 0, end = None):
+
+        link_ids = self.env.otm4rl.in_link_ids[c_id][stage_id]
+        ymax = np.sum([self.env.otm4rl.max_queues[link_id] for link_id in link_ids])
+        ylim = (0, ymax*1.05)
+        if plot_hlines and self.env.state_division != None:
+            if queue_type == "waiting":
+                ybars = [ymax*i/self.env.state_division for i in range(1, self.env.state_division + 1)]
+            else:
+                ybars = [ymax]
+        else:
+            ybars = None
+        title = "Agg. Queue Dynamics: Controller " + str(c_id) + ", Stage " + str(stage_id) + " - " + queue_type + " queue"
+        green_stages = [stage_id]
+        queue_vec = np.array([self.env.queue_buffer[link_id][queue_type][start:end] for link_id in link_ids]).sum(axis=0)
+        queue_times = list(range(len(queue_vec)))
+        if plot_signals:
+            signal_vec = self.env.signal_buffer[c_id][start:end]
+            signal_times = list(range(len(queue_vec)))
+        else:
+            signal_vec = None
+            signal_times = None
+
+        self.env.plot.plot_queue(ylim, title, green_stages, queue_vec, queue_times, signal_vec, signal_times, ybars)

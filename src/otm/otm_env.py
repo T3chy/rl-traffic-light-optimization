@@ -10,8 +10,9 @@ class otmEnv:
         self.configfile = env_init_info["configfile"]
         self.state_division = env_init_info.get("state_division", None)
         self.time_step = env_init_info["time_step"]
-        self.plot_precision = env_init_info["plot_precision"]
+        self.plot_precision = env_init_info.get("plot_precision", 1)
         assert (type(self.plot_precision) == int and self.plot_precision >= 1), "plot_precision must be an integer greater than or equal to 1"
+        assert self.time_step % self.plot_precision == 0, "time_step must be a multiple of plot_precision"
         self.buffer = env_init_info.get("buffer", False)
         self.start()
         self.action_space = range(self.otm4rl.num_stages ** self.otm4rl.num_intersections)
@@ -51,15 +52,37 @@ class otmEnv:
 
          return self.state
 
-    def step(self, action):
+    def advance(self, duration, compute_reward = False):
+
+        reward_sum = 0
+        if compute_reward:
+            for i in range(duration):
+                self.otm4rl.otm.advance(float(1))
+                queues = self.otm4rl.get_queues()
+                state = self.q2state(queues)
+                reward_sum -= np.sum(state)
+        else:
+            self.otm4rl.otm.advance(float(duration))
+
+        return reward_sum
+
+
+    def step(self, action, compute_reward = False):
         assert action in self.action_space, "%r (%s) invalid" % (action, type(action))
 
         self.otm4rl.set_control(self.decode_action(action))
         self.add_signal_buffer()
 
-        for i in range(self.plot_precision):
-            self.otm4rl.otm.advance(self.time_step/self.plot_precision)
+        if self.buffer:
+            num_runs = self.plot_precision
+        else:
+            num_runs = 1
+        duration = int(self.time_step/num_runs)
+        avg_reward = 0
+        for i in range(num_runs):
+            avg_reward += self.advance(duration, compute_reward)
             self.add_queue_buffer()
+        avg_reward /=  self.time_step
 
         queues = self.otm4rl.get_queues()
 
@@ -70,7 +93,7 @@ class otmEnv:
         except:
             reward = -np.sum(self.state)
 
-        return self.state, reward
+        return self.state, reward, avg_reward
 
     def set_state(self, queues):
         self.otm4rl.set_queues(queues)
@@ -206,7 +229,7 @@ class otmEnv:
     #     self.plot.network_gradient(self.otm4rl.get_queues(), self.otm4rl.get_control())
 
     def close(self):
-        del self.otm4rl
+        self.otm4rl.conn.close()
 
     # def render(self, mode='human'):
     #     #plot the queue profile over time
