@@ -62,18 +62,82 @@ class rlGlue:
         self.run_steps(initial_action, num_steps)
         self.end()
 
-    def test_rl_policy(self, initial_state, num_steps, buffer = True):
+    def test_policy(self, initial_state, num_steps, policy = "greedy", buffer = True):
+        if policy == "greedy":
+            policy_fun = self.agent.greedy_policy
+        elif policy == "random":
+            policy_fun = lambda x: np.random.choice(range(self.agent.num_actions))
         performance = 0
         old_buffer = self.env.buffer
         self.env.buffer = buffer
         self.env.start()
         state = self.env.reset(initial_state)
         for i in tqdm(range(num_steps)):
-            state, reward, avg_reward = self.env.step(self.agent.greedy_policy(state), compute_reward = True)
+            state, reward, avg_reward = self.env.step(policy_fun(state), compute_reward = True)
             performance += avg_reward
         self.env.buffer = old_buffer
         self.end()
         return performance/num_steps
+
+    def get_stage_times(self,controller_id, stage_id, start = 0, end = None):
+        try:
+            green_stages = [stage_id]
+            start_time = int(start/self.env.time_step)
+            end_time = None if end == None else int(end/self.env.time_step)
+            signal_vec = self.env.signal_buffer[controller_id][start_time:end_time]
+            stages = np.array(signal_vec)
+            signal_times = np.array(range(len(signal_vec)))*self.env.time_step
+            aux = np.array([stages[i] if (i == 0 or stages[i-1] != stages[i]) else -1 for i in range(len(stages))])
+            stages = np.extract(aux >= 0, stages)
+            stage_times = np.extract(aux >=0, signal_times)
+            changing_stages = np.array([stages[i] if (i == 0 or stages[i] in green_stages or (stages[i-1] in green_stages and stages[i] not in green_stages)) else -1 for i in range(len(stages))])
+            stages = np.extract(changing_stages >= 0, stages)[1:]
+            stage_times = np.extract(changing_stages >=0, stage_times)[1:]
+            return stages, stage_times
+        except:
+            return None
+
+    def get_signal_info(self,controller_id, stage_id, start = 0, end = None):
+        try:
+            stages, stage_times = self.get_stage_times(controller_id, stage_id, start, end)
+            light_duration = stage_times[1:] - stage_times[:len(stage_times)-1]
+            if stages[0] == stage_id:
+                first_green = 0
+                first_red = 1
+            else:
+                first_green = 1
+                first_red = 0
+            green_time = light_duration[range(first_green, len(light_duration), 2)].mean()
+            red_time = light_duration[range(first_red, len(light_duration), 2)].mean()
+            cycle = green_time + red_time
+            signal_info = {
+            "green_time": green_time,
+            "red_time": red_time,
+            "cycle": cycle,
+            "gtime_ratio": green_time/cycle
+            }
+            return signal_info
+        except:
+            return "Signal buffer not stored! Set env.buffer to True."
+
+    def get_offsets(self, start = 0, end = None):
+        # try:
+        c_ids = list(self.env.otm4rl.controllers.keys())
+        offsets = {c_ids[0]: 0}
+        stages, stage_times = self.get_stage_times(c_ids[0], 0)
+        stages_ref = stages[1:]
+        stage_times_ref = np.array(stage_times[1:])[stages_ref == 0]
+        len_ref = len(stage_times_ref)
+        for c_id in c_ids[1:]:
+            stages, stage_times = self.get_stage_times(c_id, 0)
+            stage_times = np.array(stage_times[1:])[stages[1:] == 0]
+            l = len(stage_times)
+            min_len = min(l, len_ref)
+            offset = (stage_times[:min_len] - stage_times_ref[:min_len]).mean()
+            offsets[c_id] = offset
+        return offsets
+        # except:
+        #     return "Signal buffer not stored! Set env.buffer to True."
 
     def end(self):
         self.env.close()

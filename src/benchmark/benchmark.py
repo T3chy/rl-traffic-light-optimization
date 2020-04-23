@@ -17,8 +17,7 @@ class offsetOptimizer:
         self.delta = params.get("delta", np.zeros(self.num_intersections))
         self.fraction_gtime = self.get_fraction_gtime()
 
-    def setup_network(self, fraction_gtime):
-        green_times = fraction_gtime * self.cycle
+    def setup_network(self, green_times):
         network = bw.Artery(self.cycle)
         for i in range(self.num_intersections):
             network.addIntersection(bw.Intersection('i' + str(i+1), self.cycle, green_times[i], green_times[i], self.delta[i]))
@@ -32,16 +31,19 @@ class offsetOptimizer:
         return fraction_gtime
 
     def optimize(self):
-        network = self.setup_network(self.fraction_gtime)
+        green_times = self.fraction_gtime * self.cycle
+        network = self.setup_network(green_times)
         bstar, bbarstar, _ = network.optimize_pretimed_lp()
         cost = bstar + bbarstar
         offsets = []
 
         for inter in network.intersection:
-            assert round(inter.absoffseto, 2) == round(inter.absoffseti, 2), "Inbound and outbund offsets for intersection " + inter.name + " not matching!"
+            absoffseto = inter.absoffseto if inter.absoffseto >=0 else self.cycle + inter.absoffseto
+            absoffseti = inter.absoffseti if inter.absoffseti >=0 else self.cycle + inter.absoffseti
+            assert round(absoffseto, 2) == round(absoffseti, 2), "Inbound and outbund offsets for intersection " + inter.name + " not matching!"
             offsets.append(inter.absoffseto)
 
-        return offsets, cost
+        return offsets, green_times, cost
 
 
     # def optimize_offset_grid(self, fraction_gtime, grid_delta):

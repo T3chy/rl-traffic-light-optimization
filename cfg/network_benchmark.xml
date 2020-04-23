@@ -7,12 +7,12 @@
 	</commodities>
 
 	<demands>
-		<demand link_id="1" commodity_id="1">1500</demand>
-    <demand link_id="5" commodity_id="1">1500</demand>
-    <demand link_id="9" commodity_id="1">750</demand>
-    <demand link_id="12" commodity_id="1">750</demand>
-    <demand link_id="15" commodity_id="1">750</demand>
-    <demand link_id="18" commodity_id="1">750</demand>
+		<demand link_id="1" commodity_id="1">1000</demand>
+    <demand link_id="5" commodity_id="1">1000</demand>
+    <demand link_id="9" commodity_id="1">500</demand>
+    <demand link_id="12" commodity_id="1">500</demand>
+    <demand link_id="15" commodity_id="1">500</demand>
+    <demand link_id="18" commodity_id="1">500</demand>
 	</demands>
 
 	<models>
@@ -48,14 +48,14 @@
 		</nodes>
 
 		<links>
-			<link id="1" length="1000" start_node_id="1" end_node_id="10" roadparam="1" full_lanes="3"/>
-			<link id="2" length="1000" start_node_id="10" end_node_id="2" roadparam="1" full_lanes="3"/>
-			<link id="3" length="1000" start_node_id="2" end_node_id="3" roadparam="1" full_lanes="3"/>
-      <link id="4" length="1000" start_node_id="3" end_node_id="40" roadparam="1" full_lanes="3"/>
-			<link id="5" length="1000" start_node_id="4" end_node_id="41" roadparam="1" full_lanes="3"/>
-			<link id="6" length="1000" start_node_id="41" end_node_id="3" roadparam="1" full_lanes="3"/>
-      <link id="7" length="1000" start_node_id="3" end_node_id="2" roadparam="1" full_lanes="3"/>
-			<link id="8" length="1000" start_node_id="2" end_node_id="11" roadparam="1" full_lanes="3"/>
+			<link id="1" length="1000" start_node_id="1" end_node_id="10" roadparam="1" full_lanes="1"/>
+			<link id="2" length="1000" start_node_id="10" end_node_id="2" roadparam="1" full_lanes="1"/>
+			<link id="3" length="1000" start_node_id="2" end_node_id="3" roadparam="1" full_lanes="1"/>
+      <link id="4" length="1000" start_node_id="3" end_node_id="40" roadparam="1" full_lanes="1"/>
+			<link id="5" length="1000" start_node_id="4" end_node_id="41" roadparam="1" full_lanes="1"/>
+			<link id="6" length="1000" start_node_id="41" end_node_id="3" roadparam="1" full_lanes="1"/>
+      <link id="7" length="1000" start_node_id="3" end_node_id="2" roadparam="1" full_lanes="1"/>
+			<link id="8" length="1000" start_node_id="2" end_node_id="11" roadparam="1" full_lanes="1"/>
 			<link id="9" length="1000" start_node_id="5" end_node_id="50" roadparam="2" full_lanes="1"/>
       <link id="10" length="1000" start_node_id="50" end_node_id="2" roadparam="2" full_lanes="1"/>
 			<link id="11" length="1000" start_node_id="2" end_node_id="60" roadparam="2" full_lanes="1"/>
@@ -71,8 +71,8 @@
 		</links>
 
 		<roadparams>
-			<roadparam id="1" capacity="2000" speed="100" jam_density="100"/>
-			<roadparam id="2" capacity="1000" speed="50" jam_density="50"/>
+			<roadparam id="1" capacity="2000" speed="100" jam_density="50"/>
+			<roadparam id="2" capacity="2000" speed="100" jam_density="50"/>
 		</roadparams>
     <roadconnections>
 
@@ -127,12 +127,12 @@
       <target_actuators ids="1"/>
       <parameters>
         <parameter name="start_time" value="0"/>
-        <parameter name="cycle" value="240"/>
-        <parameter name="offset" value="84"/>
+        <parameter name="cycle" value="120"/>
+        <parameter name="offset" value="50"/>
       </parameters>
       <stages>
-        <stage phases="1,2" duration="120"/>
-        <stage phases="7,8" duration="120"/>
+        <stage phases="1,2" duration="80"/>
+        <stage phases="7,8" duration="40"/>
       </stages>
     </controller>
 
@@ -140,12 +140,12 @@
       <target_actuators ids="2"/>
       <parameters>
         <parameter name="start_time" value="0"/>
-        <parameter name="cycle" value="240"/>
+        <parameter name="cycle" value="120"/>
         <parameter name="offset" value="0"/>
       </parameters>
       <stages>
-        <stage phases="3,4" duration="120"/>
-        <stage phases="5,6" duration="120"/>
+        <stage phases="3,4" duration="80"/>
+        <stage phases="5,6" duration="40"/>
       </stages>
     </controller>
 
