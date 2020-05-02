@@ -27,17 +27,42 @@ class OTM4RL(OTMWrapper):
         road_connections =  {1: {"in_link":1, "out_link":2},
                             2: {"in_link":2, "out_link":3},
                             3: {"in_link":3, "out_link":4},
-                            4: {"in_link":5, "out_link":6},
+                            4: {"in_link":4, "out_link":5},
                             5: {"in_link":6, "out_link":7},
                             6: {"in_link":7, "out_link":8},
-                            7: {"in_link":9, "out_link":10},
-                            8: {"in_link":10, "out_link":11},
-                            9: {"in_link":12, "out_link":13},
-                            10: {"in_link":13, "out_link":14},
-                            11: {"in_link":15, "out_link":16},
-                            12: {"in_link":16, "out_link":17},
-                            13: {"in_link":18, "out_link":19},
-                            14: {"in_link":19, "out_link":20}}
+                            7: {"in_link":8, "out_link":9},
+                            8: {"in_link":9, "out_link":10},
+                            9: {"in_link":11, "out_link":12},
+                            10: {"in_link":12, "out_link":13},
+                            11: {"in_link":14, "out_link":15},
+                            12: {"in_link":15, "out_link":16},
+                            13: {"in_link":17, "out_link":18},
+                            14: {"in_link":18, "out_link":19},
+                            15: {"in_link":20, "out_link":21},
+                            16: {"in_link":21, "out_link":22},
+                            17: {"in_link":23, "out_link":24},
+                            18: {"in_link":24, "out_link":25},
+                            19: {"in_link":26, "out_link":27},
+                            20: {"in_link":27, "out_link":28}}
+        
+    
+        
+        
+        
+                            #{1: {"in_link":1, "out_link":2},
+                            #2: {"in_link":2, "out_link":3},
+                            #3: {"in_link":3, "out_link":4},
+                            #4: {"in_link":5, "out_link":6},
+                            #5: {"in_link":6, "out_link":7},
+                            #6: {"in_link":7, "out_link":8},
+                            #7: {"in_link":9, "out_link":10},
+                            #8: {"in_link":10, "out_link":11},
+                            #9: {"in_link":12, "out_link":13},
+                            #10: {"in_link":13, "out_link":14},
+                            #11: {"in_link":15, "out_link":16},
+                            #12: {"in_link":16, "out_link":17},
+                            #13: {"in_link":18, "out_link":19},
+                            #14: {"in_link":19, "out_link":20}}
 
                             # {1: {"in_link":1, "out_link":2},
                             # 2: {"in_link":2, "out_link":13},
