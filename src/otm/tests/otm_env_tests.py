@@ -11,8 +11,8 @@ from otm_env import otmEnv
 def get_env():
 	this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 	root_folder = os.path.dirname(os.path.dirname(os.path.dirname(this_folder)))
-	configfile = os.path.join(root_folder,'cfg', 'network_1.xml')
-	return otmEnv({"state_division": 2, "time_step": 60, "plot_precision": 1, "buffer": True}, configfile)
+	configfile = os.path.join(root_folder,'cfg', 'network_2.xml')
+	return otmEnv({"configfile": configfile, "state_division": 5, "time_step": 30, "plot_precision": 1, "buffer": True})
 
 def test_random_queues():
 	env = get_env()
@@ -93,14 +93,14 @@ def test_step():
 
 	print(env.queue_buffer)
 	action = np.random.choice(env.action_space)
-	state, reward = env.step(action)
+	state, reward, _ = env.step(action)
 	print("Next state:", env.state)
 	print("Reward:", reward)
 	print(env.signal_buffer)
 
 	print(env.queue_buffer)
 	action = np.random.choice(env.action_space)
-	state, reward = env.step(action)
+	state, reward, _ = env.step(action)
 	print("Next state:", env.state)
 	print("Reward:", reward)
 	print(env.signal_buffer)
@@ -200,7 +200,7 @@ if __name__ == '__main__':
 	# test_reset()
 	# test_add_signal_buffer()
 	# test_decode_action()
-	# test_step()
+	test_step()
 	# test_close()
 	# test_plot_agg_queue()
-	test_plot_link_queue()
+	# test_plot_link_queue()
