@@ -38,9 +38,6 @@ class offsetOptimizer:
         offsets = []
 
         for inter in network.intersection:
-            absoffseto = inter.absoffseto if inter.absoffseto >=0 else self.cycle + inter.absoffseto
-            absoffseti = inter.absoffseti if inter.absoffseti >=0 else self.cycle + inter.absoffseti
-            assert round(absoffseto, 2) == round(absoffseti, 2), "Inbound and outbund offsets for intersection " + inter.name + " not matching!"
             offsets.append(inter.absoffseto)
 
         return offsets, green_times, cost

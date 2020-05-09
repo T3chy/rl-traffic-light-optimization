@@ -122,20 +122,19 @@ class rlGlue:
 
     def get_offsets(self, start = 0, end = None):
         try:
-            s = 1 if start == 0 else start
             c_ids = list(self.env.otm4rl.controllers.keys())
             c_ids.remove(1)
             offsets = {1: 0}
             stages, stage_times = self.get_stage_times(1, 0)
-            stages_ref = stages[s:end]
-            stage_times_ref = np.array(stage_times[s:end])[stages_ref == 0]
+            stages_ref = stages[1:]
+            stage_times_ref = np.array(stage_times[1:])[stages_ref == 0]
             len_ref = len(stage_times_ref)
             for c_id in c_ids:
                 stages, stage_times = self.get_stage_times(c_id, 0)
-                stage_times = np.array(stage_times[s:end])[stages[s:end] == 0]
+                stage_times = np.array(stage_times[1:])[stages[1:] == 0]
                 l = len(stage_times)
                 min_len = min(l, len_ref)
-                offset = (stage_times[:min_len] - stage_times_ref[:min_len]).mean()
+                offset = (stage_times[:min_len] - stage_times_ref[:min_len])[int(0.5*min_len):].mean()
                 offsets[c_id] = offset
             return offsets
         except:
