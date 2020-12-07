@@ -180,7 +180,7 @@ class ActorNetwork(nn.Module):
 
 class Agent(object):
     def __init__(self, agent_init_info, alpha=0.000025, beta=0.00025, tau=0.001, gamma=0.99,
-                 n_actions=2, max_size=1000000, layer1_size=400,
+                  max_size=1000000, layer1_size=400,
                  layer2_size=300, batch_size=64):
         input_dims = agent_init_info["num_states"]
         n_actions = agent_init_info["num_actions"]

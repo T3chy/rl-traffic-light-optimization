@@ -22,24 +22,24 @@ root_folder = os.path.dirname(this_folder)
 
 
 sys.path.append(this_folder + '/../otm')
-print(sys.path)
 from otm_env import *
-sys.path.append(root_folder + '/../agents')
+sys.path.append(this_folder+ '/../agents')
 
 
 # In[4]:
 
+configfile = 'network_1.xml'
 
 env_init_info = {
     "time_step": 30,
     "plot_precision": 2,
     "buffer": False,
-    "state_division": 7
+    "state_division": 7,
+    "configfile": configfile
 }
 
-configfile = 'network_1.xml'
 
-env = otmEnv(env_init_info, configfile)
+env = otmEnv(env_init_info)
 
 agent_init_info = {
             "num_states": env_init_info["state_division"]**(env.otm4rl.num_intersections * env.otm4rl.num_stages),
