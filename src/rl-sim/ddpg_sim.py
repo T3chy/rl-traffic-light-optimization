@@ -24,7 +24,7 @@ root_folder = os.path.dirname(this_folder)
 sys.path.append(this_folder + '/../otm')
 from otm_env import *
 sys.path.append(this_folder+ '/../agents')
-
+import ddpg_torch
 
 # In[4]:
 

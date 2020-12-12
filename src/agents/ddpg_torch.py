@@ -160,6 +160,7 @@ class ActorNetwork(nn.Module):
         self.to(self.device)
 
     def forward(self, state):
+        print(state)
         x = self.fc1(state)
         x = self.bn1(x)
         x = F.relu(x)
@@ -182,7 +183,8 @@ class Agent(object):
     def __init__(self, agent_init_info, alpha=0.000025, beta=0.00025, tau=0.001, gamma=0.99,
                   max_size=1000000, layer1_size=400,
                  layer2_size=300, batch_size=64):
-        input_dims = agent_init_info["num_states"]
+        input_dims = [agent_init_info["num_states"]]
+        input_dims = [2401]
         n_actions = agent_init_info["num_actions"]
         self.gamma = gamma
         self.tau = tau
