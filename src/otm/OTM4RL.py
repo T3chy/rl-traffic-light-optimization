@@ -110,10 +110,14 @@ class OTM4RL(OTMWrapper):
     #       x['ming'] ... min_green_time
     def get_signals(self):
         X = {}
+        print(self.otm.scenario())
         for oact in self.otm.scenario().get_actuators():
+            print(oact)
+            # print(oact.getType())
+            print(str(oact.getType()))
             if str(oact.getType())=='signal':
                 psig = {}
-                psig['node_id'] = oact.getTarget_id()
+                psig['node_id'] = oact.getNode_id()
                 psig['phases'] = {}
                 for phase in oact.get_phases():
                     x = {}
@@ -124,6 +128,7 @@ class OTM4RL(OTMWrapper):
                     psig['phases'][phase.getId()] = x
                 X[oact.getId()] = psig
 
+        print(X)
         return X
 
     # returns map from controller id to a controller object (a dict)

@@ -7,8 +7,8 @@ import numpy as np
 
 this_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 root_folder = os.path.dirname(this_folder)
-sys.path.append(root_folder + '\\otm')
-sys.path.append(root_folder + '\\agents')
+sys.path.append(this_folder+ '/../otm')
+sys.path.append(this_folder + '/../agents')
 from otm_env import *
 
 class rlGlue:
