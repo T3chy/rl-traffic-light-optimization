@@ -73,10 +73,15 @@ class OTM4RL(OTMWrapper):
         for c_id, controller in self.controllers.items():
             in_link_ids[c_id] = dict()
             stages = controller["stages"]
+            print(self.controllers.items())
+            print(self.signals)
+            print(self.get_signals())
             for i, stage in enumerate(stages):
                 link_ids = []
                 phase_ids = stage["phases"]
                 for phase_id in phase_ids:
+                    print(phase_id)
+                    print(self.signals[c_id]["phases"])
                     road_connections = self.signals[c_id]["phases"][phase_id]["road_conns"]
                     for road_connection in road_connections:
                         link_ids.append(self.road_connection_info[road_connection]["in_link"])
@@ -111,6 +116,7 @@ class OTM4RL(OTMWrapper):
     def get_signals(self):
         X = {}
         for oact in self.otm.scenario().get_actuators():
+            print(oact.getType())
             if str(oact.getType())=='signal':
                 psig = {}
                 psig['node_id'] = oact.getNode_id()
